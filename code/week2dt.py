@@ -8,7 +8,7 @@ user_agent = UserAgent()
 user_agent.random
 
 category_url = 'https://tw.news.yahoo.com/%E3%80%8A%E8%8B%B1%E9%9B%84%E8%81%AF%E7%9B%9F%E3%80%8Blta%E4%BB%A3%E8%A1%A8tl%E5%8F%AA%E6%89%9317%E5%A0%B4%E6%AF%94%E8%B3%BD%E5%B0%B1%E5%A5%AA%E5%86%A0%E5%BC%95%E8%AD%B0%EF%BC%8C%E7%9B%B4%E6%8E%A5%E6%AF%94%E9%9F%93%E5%9C%8Bhle%E5%B0%91%E4%BA%86%E4%B8%80%E5%8D%8A-063603609.html'
-# req = requests.get( category_url )
+# req = requests.get( category_url )c
 req = requests.get(category_url, headers={ 'user-agent': user_agent.random }, timeout=5)
 #print(req.status_code)
 

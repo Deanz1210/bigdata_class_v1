@@ -25,18 +25,17 @@ soup = BeautifulSoup(req.text, 'html.parser')
 ul_element = soup.find('ul', {'class': 'My(0) P(0) Wow(bw) Ov(h)'})
 
 # 顯示找到的 ul 元素
+ul_element = soup.find('ul', {'class': 'My(0) P(0) Wow(bw) Ov(h)'})
 #print(ul_element)
-
 #items = soup.find('ul', {'class': 'My(0) P(0) Wow(bw) Ov(h)'}).findAll('li')
 #print(items)
 
 
 # 擷取 ul 元素中的所有 li 元素
-if ul_element is None:
-    print("找不到 ul 標籤，可能是 class 名稱錯誤或網頁結構改變")
-    print(soup.prettify())  # 印出 HTML 原始碼，方便手動檢查
-else:
-    li_elements = ul_element.find_all('li')
+##print("找不到 ul 標籤，可能是 class 名稱錯誤或網頁結構改變")
+    #print(soup.prettify())  # 印出 HTML 原始碼，方便手動檢查
+#else:
+    #li_elements = ul_element.find_all('li')
     #print(li_elements)
 
 
