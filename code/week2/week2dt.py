@@ -60,3 +60,12 @@ else:
     print("未找到圖片")
 
 """
+# 擷取 `.caas-body` 內所有 <p> 標籤的內容
+paragraphs = [p.text.strip() for p in soup.select(".caas-body p")]
+
+# 過濾掉包含「相關新聞」的段落
+filtered_news = [item for item in paragraphs if not item.startswith("相關新聞")]
+
+# 重新編號並輸出
+for i, text in enumerate(filtered_news, 1):
+    print(f"{i}. {text}")
