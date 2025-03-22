@@ -4,7 +4,7 @@ import json  # Import json to parse data safely
 from collections import Counter
 
 # Load DataFrame
-df = pd.read_csv("cna_news_preprocessed.csv", sep='|')
+df = pd.read_csv("D:\\project_code\\bigdata_class_v1\\030\\cna_news_preprocessed.csv", sep='|')
 
 
 def NerToken(word, ner, idx):
@@ -60,7 +60,7 @@ hotPersons = get_top_ner_words()
 
 df_hotPersons = pd.DataFrame(hotPersons, columns = ['category','top_keys'])
 print("Saving to file...")
-df_hotPersons.to_csv('D:\\project_code\\bigdata_class_v1\\code\\week5\\news_top_person_by_category_via_ner.csv', sep=',', index=False)
+df_hotPersons.to_csv('D:\\project_code\\bigdata_class_v1\\030\\news_top_person_by_category_via_ner.csv', sep=',', index=False)
 print("File saved successfully.")
 
 
