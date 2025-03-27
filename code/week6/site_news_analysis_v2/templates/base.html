@@ -64,11 +64,11 @@
 
                       <a class="dropdown-item" href="{% url 'app_top_keyword:home' %}">熱門關鍵詞分析</a> 
 
-                      <a class="dropdown-item" href="#">熱門人物排行分析</a> 
+                      <a class="dropdown-item" href="{% url 'app_top_person:home' %}">熱門人物排行分析</a> 
 
                       <a class="dropdown-item" href="#">命名實體熱門分析</a> 
 
-                      <a class="dropdown-item" href="#" style="color: green">昨日誰最大</a> 
+                      <a class="dropdown-item" href="{% url 'app_hot_person_of_yesterday:home' %}" style="color: green">昨日誰最大</a> 
 
                     </div> 
 

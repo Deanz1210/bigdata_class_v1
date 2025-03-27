@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'app_top_keyword', 
     'app_top_person',
      'app_user_keyword',
+     'app_hot_persons_of_yesterday',
 ]
 
 MIDDLEWARE = [

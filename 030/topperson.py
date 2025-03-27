@@ -13,7 +13,7 @@ def NerToken(word, ner, idx):
 
 # Allowed named entity types
 allowedNE = ['PERSON']
-news_categories = ['遊戲新聞', '遊戲攻略', '電競賽事']
+news_categories = ['PC','動漫畫','電競','活動展覽']
 filtered_words =[]
 for ner,word in eval(df.entities[0]):
     if (len(word) >= 2) & (ner in allowedNE):

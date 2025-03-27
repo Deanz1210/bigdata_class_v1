@@ -23,4 +23,6 @@ urlpatterns = [
    path('topword/', include('app_top_keyword.urls')),
    path('topperson/', include('app_top_person.urls')),
     path('userkeyword/', include('app_user_keyword.urls')),
+   path('hotpersonsofyesterday/', include('app_hot_persons_of_yesterday.urls', namespace='app_hot_person_of_yesterday')),
+    
 ]

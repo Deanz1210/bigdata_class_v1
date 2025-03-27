@@ -12,7 +12,7 @@ from datetime import datetime, timedelta
 def load_df_data():
     # df is a global variable
     global  df
-    df = pd.read_csv('app_user_keyword/dataset/cna_news_200_preprocessed.csv', sep='|')
+    df = pd.read_csv('D:\\project_code\\bigdata_class_v1\\code\\week6\\site_news_analysis_v2\\app_user_keyword\\dataset\\cna_news_preprocessed.csv', sep='|')
 
 # We should reload df when necessary
 load_df_data() 
@@ -59,12 +59,16 @@ def api_get_top_userkey(request):
 
 
 def filter_dataFrame(user_keywords, cond, cate, weeks):
+    global df
 
     # end date: the date of the latest record of news
     end_date = df.date.max()
-    
+
     # start date
     start_date = (datetime.strptime(end_date, '%Y-%m-%d').date() - timedelta(weeks=weeks)).strftime('%Y-%m-%d')
+
+    # 確保 content 欄位沒有 NaN
+    df['content'] = df['content'].fillna('')
 
     # proceed filtering
     if (cate == "全部") & (cond == 'and'):
@@ -83,6 +87,7 @@ def filter_dataFrame(user_keywords, cond, cate, weeks):
             & df.content.apply(lambda text: any((qk in text) for qk in user_keywords))]
 
     return df_query
+
 # ** How many pieces of news were the keyword(s) mentioned in?
 # ** How many times were the keyword(s) mentioned?
 
@@ -90,7 +95,7 @@ def filter_dataFrame(user_keywords, cond, cate, weeks):
 # (1) cate_occurence={}  number of pieces containing the keywords
 # (2) cate_freq={}       number of times the keywords were mentioned
 
-news_categories = ['全部','政治', '科技', '運動', '證卷', '產經', '娛樂', '生活', '國際', '社會', '文化', '兩岸']
+news_categories = ['全部','PC','動漫畫','電競','活動展覽']
 
 def count_keyword(query_df, user_keywords):
     cate_occurence={}
