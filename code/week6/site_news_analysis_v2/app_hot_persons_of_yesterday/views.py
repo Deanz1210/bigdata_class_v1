@@ -17,7 +17,7 @@ the format of data:
 def load_data_topPerson():
     # read df
     df_topPerson = pd.read_csv(
-        'D:\\project_code\\bigdata_class_v1\\code\\week6\\site_news_analysis_v2\\app_hot_persons_of_yesterday\\dataset\popular-persons-of-yesterday.csv')
+        'app_hot_persons_of_yesterday/dataset/popular-persons-of-yesterday.csv')
     # refresh data
     global data # make data global. It can be used everywhere.
     data = {}

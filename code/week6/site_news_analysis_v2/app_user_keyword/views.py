@@ -12,7 +12,7 @@ from datetime import datetime, timedelta
 def load_df_data():
     # df is a global variable
     global  df
-    df = pd.read_csv('D:\\project_code\\bigdata_class_v1\\code\\week6\\site_news_analysis_v2\\app_user_keyword\\dataset\\cna_news_preprocessed.csv', sep='|')
+    df = pd.read_csv('app_user_keyword/dataset/cna_news_preprocessed.csv', sep='|')
 
 # We should reload df when necessary
 load_df_data() 
