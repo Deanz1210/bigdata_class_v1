@@ -1,0 +1,199 @@
+{% extends 'base.html' %}
+
+{% block title %}輿情分析平台 - 熱門關鍵詞文字雲{% endblock %}
+
+{% block content %}
+
+<div class="col-lg-12">
+    <h1>各類新聞最熱門的關鍵詞與文字雲</h1>
+    <p>熱門度分析:可以了解ACG關注那些重要的東東</p>
+</div>
+
+<!-- 新聞類別選單 -->
+<div class="col-lg-6 mb-2">
+    <div class="card">
+        <div class="card-header">
+            <h3 class="h6 text-uppercase mb-0">熱門關鍵字瀏覽與繪圖(資料週期:3/27前的各100篇資料)</h3>
+        </div>
+        <div class="card-body">
+            <!-- 新聞類別選單 -->
+            <div class="form-group row">
+                <label class="col-sm-3 form-control-label">新聞類別</label>
+                <div class="col-md-9">
+                    <select id="cate-selected" name="news_category" class="form-control">
+                        <option>全部</option>
+                        <option>PC</option>
+                        <option>動漫畫</option>
+                        <option>電競</option>
+                        <option>活動展覽</option>
+                    </select>
+                    <small class="form-text text-muted">請選擇新聞類別</small>
+                </div>
+            </div>
+
+            <!-- 熱門詞數量 -->
+            <div class="form-group row">
+                <label class="col-md-3 form-control-label">多少個熱門詞?</label>
+                <div class="col-md-9">
+                    <input id="topk-selected" name="topk" value="10" class="form-control form-control-success">
+                    <small class="form-text text-muted">內定值為10</small>
+                </div>
+            </div>
+
+            <!-- 按鈕 -->
+            <div class="form-group row">
+                <div class="col-md-9 ml-auto">
+                    <button type="button" id="btn-ok" class="btn btn-primary">查詢</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 長條圖區 -->
+<div class="col-lg-6 mb-5">
+    <div class="card">
+        <div class="card-header">
+            <h3 class="h6 text-uppercase mb-0">熱門關鍵字繪圖</h3>
+        </div>
+        <div class="card-body">
+            <canvas id="mychart"></canvas>
+        </div>
+    </div>
+</div>
+
+<!-- 熱門關鍵字清單 -->
+<div class="col-lg-6 mb-5">
+    <div class="card">
+        <div class="card-header">
+            <h3 class="h6 text-uppercase mb-0">熱門關鍵字</h3>
+        </div>
+        <div class="card-body">
+            <ul id="topkeys"></ul>
+        </div>
+    </div>
+</div>
+
+<!-- 文字雲區塊 -->
+<div class="col-lg-6 mb-5">
+    <div class="card">
+        <div class="card-header">
+            <h3 class="h6 text-uppercase mb-0">文字雲</h3>
+        </div>
+        <div class="card-body">
+            <canvas id="wordcloud-canvas" width="500" height="400"></canvas>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<!-- chart.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.min.js"></script>
+<!-- wordcloud.js -->
+<script src="https://cdn.jsdelivr.net/npm/wordcloud@1.1.0/src/wordcloud2.min.js"></script>
+
+<script>
+    callAjax();
+
+    $('#cate-selected').on('change', function () {
+        callAjax();
+    });
+
+    $('#btn-ok').on('click', function () {
+        callAjax();
+    });
+
+    function callAjax() {
+        let cate = $('#cate-selected').val();
+        let topk = $('#topk-selected').val();
+
+        $.ajax({
+            type: "POST",
+            url: "http://127.0.0.1:8000/topword/api_get_cate_topword/",
+            data: {
+                "news_category": cate,
+                "topk": topk
+            },
+            success: function (received) {
+                let chart_data = received.chart_data;
+                let wf_pairs = received.wf_pairs;
+                showTopKeys(wf_pairs);
+                showChart(chart_data);
+                showWordCloud(wf_pairs); // 顯示文字雲
+            }
+        });
+    }
+
+    function showTopKeys(items) {
+        $('#topkeys').empty();
+        for (let i = 0; i < items.length; i++) {
+            let item_li = "<li>" + items[i] + "</li>";
+            $('#topkeys').append(item_li);
+        }
+    }
+
+    function showChart(chart_data) {
+        let values = chart_data.values;
+        let labels = chart_data.labels;
+        let category = chart_data.category;
+
+        let data = {
+            labels: labels,
+            datasets: [{
+                label: category,
+                data: values,
+                backgroundColor: randomColors(values.length),
+                borderColor: randomColors(values.length),
+                borderWidth: 1,
+            }],
+        };
+
+        let options = {
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        beginAtZero: true
+                    }
+                }]
+            },
+        };
+
+        let canvas_mychrat = document.getElementById("mychart");
+        if (window.barchart) {
+            barchart.destroy();
+        }
+
+        barchart = new Chart(canvas_mychrat, {
+            type: 'bar',
+            data: data,
+            options: options,
+        });
+
+        function randomColors(num_colors) {
+            let colors = [];
+            for (i = 0; i < num_colors; i++) {
+                let r = Math.floor(Math.random() * 255);
+                let g = Math.floor(Math.random() * 255);
+                let b = Math.floor(Math.random() * 255);
+                let rgb = `rgba(${r},${g},${b},0.5)`
+                colors.push(rgb);
+            }
+            return colors;
+        }
+    }
+
+    function showWordCloud(wf_pairs) {
+        let wordEntries = wf_pairs.map(([word, freq]) => [word, freq]);
+        WordCloud(document.getElementById('wordcloud-canvas'), {
+            list: wordEntries,
+            gridSize: 10,
+            weightFactor: 5,
+            fontFamily: 'Times, serif',
+            color: 'random-dark',
+            backgroundColor: '#f8f9fa'
+        });
+    }
+</script>
+{% endblock %}
