@@ -47,6 +47,7 @@ INSTALLED_APPS = [
      'app_correlation_analysis',
      'app_user_keyword_association',
      'app_user_keyword_sentiment',
+     'app_game_mayor',
 ]
 
 MIDDLEWARE = [

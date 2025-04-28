@@ -29,5 +29,6 @@ urlpatterns = [
     path('correlation/', include('app_correlation_analysis.urls')),
     path('userkeyword_assoc/', include('app_user_keyword_association.urls')),
     path('userkeyword_senti/', include('app_user_keyword_sentiment.urls')),
+    path('gamemayor/', include('app_game_mayor.urls')),
     
 ]
