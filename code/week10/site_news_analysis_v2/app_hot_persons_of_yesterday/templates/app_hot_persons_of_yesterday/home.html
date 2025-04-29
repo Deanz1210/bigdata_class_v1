@@ -1,0 +1,178 @@
+{% extends 'base.html' %}
+
+{% block title %}
+  熱門人物
+{% endblock %}
+
+{% block content %}
+  <div class="container py-5">
+    <div class="row">
+      <div class="col-lg-12 text-center mb-5">
+        <h1 class="display-4 font-weight-bold">昨日誰最大</h1>
+        <p class="lead text-muted">哪個人物被報導最多次？</p>
+      </div>
+
+      <!-- 篩選條件區塊 -->
+      <div class="col-lg-6 mb-5">
+        <div class="card shadow-sm">
+          <div class="card-header bg-primary text-white">
+            <h3 class="h6 text-uppercase mb-0">篩選條件</h3>
+          </div>
+          <div class="card-body">
+            <p class="text-muted">選擇新聞類別和要顯示的熱門人物數量。</p>
+
+            <!-- 類別選擇 -->
+            <div class="mb-3">
+              <label class="form-label">新聞類別</label>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" id="cate_all" value="全部" name="cateradio" checked />
+                <label class="form-check-label" for="cate_all">全部</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" id="cate_politics" value="PC" name="cateradio" />
+                <label class="form-check-label" for="cate_politics">PC</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" id="cate_tech" value="動漫畫" name="cateradio" />
+                <label class="form-check-label" for="cate_tech">動漫畫</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" id="cate_sports" value="電競" name="cateradio" />
+                <label class="form-check-label" for="cate_sports">電競</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" id="cate_stocks" value="活動展覽" name="cateradio" />
+                <label class="form-check-label" for="cate_stocks">活動展覽</label>
+              </div>
+            </div>
+
+            <!-- 顯示人物數量 -->
+            <div class="mb-3">
+              <label class="form-label">顯示多少個人物?</label>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" value="3" name="topkradio" id="topk3" />
+                <label class="form-check-label" for="topk3">3</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" value="5" name="topkradio" id="topk5" checked />
+                <label class="form-check-label" for="topk5">5</label>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 顯示圖表 -->
+      <div class="col-lg-6 mb-5">
+        <div class="card shadow-sm">
+          <div class="card-header bg-success text-white">
+            <h3 class="h6 text-uppercase mb-0">昨日誰最大長條圖</h3>
+          </div>
+          <div class="card-body">
+            <!-- 設定 canvas 高度，讓長條圖部分變長 -->
+            <canvas id="mychart" style="height: 500px;"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block extra_js %}
+  <script src="https://code.jquery.com/jquery-3.1.0.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.min.js"></script>
+
+  <script>
+    // 當頁面載入時，進行 Ajax 請求
+    call_ajax();
+
+    // 監聽新聞類別的變動
+    $("input[name='cateradio']").on('change', function () {
+      call_ajax();
+    });
+
+    // 監聽顯示幾個人物的選擇變動
+    $("input[name='topkradio']").on('change', function () {
+      call_ajax();
+    });
+
+    // 發送 Ajax 請求並繪製圖表
+    function call_ajax() {
+      const cate = $("input[name='cateradio']:checked").val();
+      const topk = $("input[name='topkradio']:checked").val();
+      
+      $.ajax({
+        type: 'POST',
+        url: '/hotpersonsofyesterday/api_get_hotPerson/',
+        data: { news_category: cate, topk: topk },
+        success: function (received) {
+          const chart_data = received.chart_data;
+          const wf_pairs = received.wf_pairs;
+
+          // 確認回傳資料結構是否正確
+          if (chart_data && chart_data.labels && chart_data.values) {
+            showChart(chart_data);
+          } else {
+            console.log('返回的 chart_data 格式錯誤');
+          }
+        },
+        error: function (err) {
+          console.log("AJAX 請求錯誤", err);
+        }
+      });
+    }
+
+    // 顯示圖表
+    function showChart(chart_data) {
+      const values = chart_data.values;
+      const labels = chart_data.labels;
+      const category = chart_data.category;
+
+      const data = {
+        labels: labels,
+        datasets: [{
+          label: category,
+          data: values,
+          backgroundColor: randomColors(values.length),
+          borderColor: randomColors(values.length),
+          borderWidth: 1
+        }]
+      };
+
+      const options = {
+        scales: {
+          yAxes: [{
+            ticks: { beginAtZero: true }
+          }]
+        },
+        responsive: true,
+        maintainAspectRatio: false
+      };
+
+      const canvas_mychrat = document.getElementById('mychart');
+
+      if (window.barchart) {
+        window.barchart.destroy();
+      }
+
+      window.barchart = new Chart(canvas_mychrat, {
+        type: 'bar',
+        data: data,
+        options: options
+      });
+    }
+
+    // 隨機生成顏色
+    function randomColors(num_colors) {
+      let colors = [];
+      for (let i = 0; i < num_colors; i++) {
+        let r = Math.floor(Math.random() * 255);
+        let g = Math.floor(Math.random() * 255);
+        let b = Math.floor(Math.random() * 255);
+        let rgb = `rgba(${r},${g},${b},0.5)`; 
+        colors.push(rgb);
+      }
+      return colors;
+    }
+  </script>
+{% endblock %}
