@@ -50,6 +50,7 @@ INSTALLED_APPS = [
      'app_game_mayor',
      'app_user_keyword_db',
      'app_top_person_db',
+     'app_user_keyword_llm_report',
 ]
 
 MIDDLEWARE = [

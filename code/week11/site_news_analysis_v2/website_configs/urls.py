@@ -20,5 +20,6 @@ urlpatterns = [
     path('topperson_db/', include('app_top_person_db.urls')),
         # admin
     path('admin/', admin.site.urls),
+    path('userkeyword_report/', include('app_user_keyword_llm_report.urls')),
 
 ]
